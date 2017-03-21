@@ -1,0 +1,28 @@
+{
+  "name": "taaabs-compute-trace-split",
+  "version": "1.0.0",
+  "description": "Graphical element that helps the user splitting a trace according to an attribute of the obsels.",
+  "keywords": [
+    "web-components",
+    "polymer",
+    "taaabs"
+  ],
+  "authors": [
+    "Rémi Casado"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/TaaabsElements/taaabs-compute-trace-split.git"
+  },
+  "main": "taaabs-compute-trace-split.html",
+  "license": "https://github.com/TaaabsElements/taaabs-compute-trace-split/LICENSE",
+  "dependencies": {
+    "polymer": "polymer/polymer",
+    "taaabs-themes": "TaaabsElements/taaabs-themes"
+  },
+  "devDependencies": {
+    "iron-component-page": "polymerelements/iron-component-page#^1.0.0",
+    "webcomponentsjs": "webcomponents/webcomponentsjs#^0.7.0"
+  },
+  "ignore": []
+}

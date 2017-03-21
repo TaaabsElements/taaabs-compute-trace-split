@@ -1,0 +1,157 @@
+<link rel="import" href="../taaabs-themes/taaabs-theme.html">
+
+<dom-module id="taaabs-compute-trace-split">
+  <template>
+    <style include="taaabs-theme"></style>
+    <style>
+      :host {
+        display: block;
+      }
+    </style>
+    <div> Trace source : [[_trace.uri]] </div>
+    <div>
+      <paper-dropdown-menu class="fit-width" noink id="attribute-index-dropdown">
+        <paper-listbox class="dropdown-content" selected="{{_attributeIndex}}">
+          <template is="dom-repeat" items="[[_attributes]]">
+            <paper-item>[[item]]</paper-item>
+          </template>
+  </paper-listbox>
+  </paper-dropdown-menu>
+  </div>
+
+  <div>
+    <table>
+      <template is="dom-repeat" items="[[_attributeValues]]">
+        <tr>
+          <td>[[item.value]]</td><td><paper-checkbox checked="{{item.checked}}" noink></paper-checkbox>
+        </tr>
+      </template>
+    </table>
+  </div>
+
+  <div>
+    <paper-input class="fit-width" label="Computed trace prefix. ex: source_split_" value="{{_computedPrefix}}"></paper-input>
+  </div>
+
+  <div class="fit-width flex-equal-around-justified">
+    <paper-button on-click="_onCreateClick">Create</paper-button>
+  </div>
+
+  </template>
+  <script>
+    Polymer({
+      is: 'taaabs-compute-trace-split',
+
+      properties: {
+        /**
+         * Prefix of the computed trace created.
+         *
+         * @attribute _computedPrefix
+         * @type String
+         */
+        _computedPrefix: {
+          type: String,
+          notify: true,
+          value: null
+        },
+      },
+
+      attached: function() {},
+
+      ready: function() {},
+
+      setAttributeValues: function(list) {
+        var av = [];
+        for (var i = 0; i < list.length; i++) {
+          av.push({
+            value: list[i],
+            checked: true
+          });
+        }
+        this.set('_attributeValues', av);
+      },
+
+      setAttributes: function(list) {
+        this.set('_attributes', list);
+      },
+
+      setAttributeIndex: function(index) {
+        this.set('_attributeIndex', index);
+      },
+
+      setTrace: function(trace) {
+        this.set('_trace', trace);
+      },
+
+      setModel: function(model) {
+        this.set('_model', model);
+      },
+
+      setBase: function(base) {
+        this.set('_base', base);
+      },
+
+      setFullPackage: function(base, model, trace, atts, attIndex, attValues) {
+        this.setBase(base);
+        this.setModel(model);
+        this.setTrace(trace);
+        this.setAttributes(atts);
+        this.setAttributeIndex(attIndex);
+        this.setAttributeValues(attValues);
+      },
+
+      _onCreateClick: function() {
+        console.log(this._attributeValues);
+        this.set('_requestPayload', []);
+        for (var i = 0; i < this._attributeValues.length; i++) {
+          if (this._attributeValues[i].checked) {
+            this.push('_requestPayload', this._createRequest(this._attributeValues[i].value));
+          }
+        }
+        this._createComputeTrace(0);
+      },
+
+      _createComputeTrace: function(index){
+        if(index >= this._requestPayload.length){
+          alert('wouhou');
+        }
+        else{
+          var rp = this._requestPayload[index];
+          this._base.create_computed_trace(rp.id, rp.hasMethod, rp.parameter, rp.hasSource, rp.label).then(function(response){
+            this._createComputeTrace(index+1);
+          }.bind(this)).catch(function(err){
+            console.log(err);
+          });
+        }
+      },
+
+      _createRequest: function(value) {
+        var focus_att_name = this._attributes[this._attributeIndex];
+        var focus_att_val = value;
+
+        var query = "{?obs m:" + focus_att_name + " \"" + focus_att_val + "\".}";
+
+        console.log(query);
+
+        var id_computed_trace = this._computedPrefix+'_'+focus_att_val+'/';
+        var source_uri = this._trace.uri.split('/');
+        source_uri = source_uri[source_uri.length - 2]+'/';
+        var param = "bgp=" + query;
+
+
+
+        var request = {
+          "id": id_computed_trace,
+          "type": "ComputedTrace",
+          "label": "Trace split programmatically",
+          "hasMethod": "filter",
+          "hasSource": [source_uri],
+          "parameter": [param]
+        };
+
+        return request;
+      }
+
+    });
+  </script>
+</dom-module>
