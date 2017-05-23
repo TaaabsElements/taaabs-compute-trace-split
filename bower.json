@@ -17,7 +17,7 @@
   "main": "taaabs-compute-trace-split.html",
   "license": "https://github.com/TaaabsElements/taaabs-compute-trace-split/LICENSE",
   "dependencies": {
-    "polymer": "polymer/polymer",
+    "polymer": "Polymer/polymer#<2.*",
     "taaabs-themes": "TaaabsElements/taaabs-themes"
   },
   "devDependencies": {
